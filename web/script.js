@@ -6,6 +6,21 @@ const table = document.getElementById("studentTable");
 const message = document.getElementById("message");
 const search = document.getElementById("search");
 
+// Sidebar navigation
+const navButtons = document.querySelectorAll(".nav-btn");
+const pages = document.querySelectorAll(".page");
+
+navButtons.forEach(button => {
+    button.addEventListener("click", function () {
+        navButtons.forEach(btn => btn.classList.remove("active"));
+        pages.forEach(page => page.classList.remove("active"));
+
+        button.classList.add("active");
+        document.getElementById(button.dataset.target).classList.add("active");
+    });
+});
+
+// Grade calculation
 function calculateGrade(marks) {
     if (marks >= 90) return "A+";
     if (marks >= 80) return "A";
@@ -15,20 +30,31 @@ function calculateGrade(marks) {
     return "F";
 }
 
+// Overall attendance
 function calculateAttendance(student) {
-    return (student.attended / student.total) * 100;
+    const total = student.total.reduce((a, b) => a + b, 0);
+    const attended = student.attended.reduce((a, b) => a + b, 0);
+
+    return total > 0 ? attended * 100 / total : 0;
 }
 
+// Average marks
+function averageMarks(student) {
+    return student.marks.reduce((a, b) => a + b, 0) / 5;
+}
+
+// Safe text display
 function escapeHTML(value) {
     return String(value).replace(/[&<>"']/g, c => ({
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
-        "'": "&#039;"
+        "'": "&#39;"
     })[c]);
 }
 
+// Display student records
 function renderStudents(filter = "") {
     const filtered = students.filter(s =>
         s.name.toLowerCase().includes(filter.toLowerCase()) ||
@@ -38,21 +64,22 @@ function renderStudents(filter = "") {
     table.innerHTML = filtered.length
         ? filtered.map(s => {
             const attendance = calculateAttendance(s);
-            const shortage = attendance < 75;
+            const marks = averageMarks(s);
+
+            const shortage = s.total.some((total, i) =>
+                s.attended[i] * 100 / total < 75
+            );
 
             return `
                 <tr>
                     <td>${s.roll}</td>
                     <td>${escapeHTML(s.name)}</td>
                     <td>${attendance.toFixed(1)}%</td>
-                    <td>${s.marks}</td>
-                    <td>${calculateGrade(s.marks)}</td>
-                    <td>
-                        <span class="${shortage ? "status-low" : "status-good"}">
-                            ${shortage ? "Shortage" : "Good"}
-                        </span>
-                    </td>
-                </tr>`;
+                    <td>${marks.toFixed(1)}</td>
+                    <td>${calculateGrade(marks)}</td>
+                    <td>${shortage ? "Shortage" : "Good"}</td>
+                </tr>
+            `;
         }).join("")
         : `<tr><td colspan="6">No students found.</td></tr>`;
 
@@ -60,6 +87,7 @@ function renderStudents(filter = "") {
     renderRanking();
 }
 
+// Dashboard statistics
 function updateDashboard() {
     const count = students.length;
 
@@ -69,11 +97,14 @@ function updateDashboard() {
         : 0;
 
     const shortage = students.filter(s =>
-        calculateAttendance(s) < 75
+        s.total.some((total, i) =>
+            s.attended[i] * 100 / total < 75
+        )
     ).length;
 
     const avgMarks = count
-        ? students.reduce((sum, s) => sum + s.marks, 0) / count
+        ? students.reduce((sum, s) =>
+            sum + averageMarks(s), 0) / count
         : 0;
 
     document.getElementById("totalStudents").textContent = count;
@@ -84,55 +115,76 @@ function updateDashboard() {
         avgMarks.toFixed(1);
 }
 
+// Performance rankings
 function renderRanking() {
     const rankingList = document.getElementById("rankingList");
 
-    const ranked = [...students].sort(
-        (a, b) => b.marks - a.marks
+    const ranked = [...students].sort((a, b) =>
+        averageMarks(b) - averageMarks(a)
     );
 
     rankingList.innerHTML = ranked.length
-        ? ranked.map(s =>
-            `<li><strong>${escapeHTML(s.name)}</strong> —
-            ${s.marks} marks (${calculateGrade(s.marks)})</li>`
-          ).join("")
+        ? ranked.map((s, i) => `
+            <li>
+                <strong>${escapeHTML(s.name)}</strong>
+                — ${averageMarks(s).toFixed(1)} average marks
+                (${calculateGrade(averageMarks(s))})
+            </li>
+        `).join("")
         : "<li>No rankings yet.</li>";
 }
 
+// Add student
 form.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     const student = {
         roll: Number(document.getElementById("roll").value),
         name: document.getElementById("name").value.trim(),
-        total: Number(document.getElementById("total").value),
-        attended: Number(document.getElementById("attended").value),
-        marks: Number(document.getElementById("marks").value)
+        total: [],
+        attended: [],
+        marks: []
     };
 
-    if (!student.name || student.total <= 0 ||
-        student.attended < 0 ||
-        student.attended > student.total ||
-        student.marks < 0 || student.marks > 100) {
+    for (let i = 0; i < 5; i++) {
+        student.total.push(Number(document.getElementById("total" + i).value));
+        student.attended.push(Number(document.getElementById("attended" + i).value));
+        student.marks.push(Number(document.getElementById("marks" + i).value));
+    }
 
+    const invalid = student.roll <= 0 ||
+        !student.name ||
+        student.total.some((t, i) =>
+            t <= 0 ||
+            student.attended[i] < 0 ||
+            student.attended[i] > t ||
+            student.marks[i] < 0 ||
+            student.marks[i] > 100
+        );
+
+    if (invalid) {
         message.textContent = "Please enter valid details.";
-        message.style.color = "#c34c70";
         return;
     }
 
     if (students.some(s => s.roll === student.roll)) {
         message.textContent = "Roll number already exists!";
-        message.style.color = "#c34c70";
         return;
     }
+
+    const values = [
+        student.roll,
+        student.name,
+        ...student.total,
+        ...student.attended,
+        ...student.marks
+    ];
 
     try {
         const response = await fetch("/addStudent", {
             method: "POST",
-            headers: {
-                "Content-Type": "text/plain"
-            },
-            body: `${student.roll},${student.name},${student.total},${student.attended},${student.marks}`
+            headers: { "Content-Type": "text/plain" },
+            body: values.join(",")
         });
 
         if (!response.ok) {
@@ -141,21 +193,19 @@ form.addEventListener("submit", async function(event) {
 
         students.push(student);
         form.reset();
-
-        message.textContent = "Student added successfully! ✨";
-        message.style.color = "#168553";
-
+        message.textContent = "Student added successfully!";
         renderStudents(search.value);
 
     } catch (error) {
-        message.textContent = "Could not connect to server. Please try again.";
-        message.style.color = "#c34c70";
+        message.textContent =
+            "Could not connect to server. Please try again.";
         console.error(error);
     }
 });
 
-search.addEventListener("input", function() {
-    renderStudents(search.value);
-});
+// Search
+search.addEventListener("input", () =>
+    renderStudents(search.value)
+);
 
 renderStudents();

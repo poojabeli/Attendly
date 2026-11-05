@@ -14,8 +14,9 @@ public class AttendanceServer {
         StudentManager manager = new StudentManager();
 
         HttpServer server = HttpServer.create(
-            new InetSocketAddress(8082), 0
-        );
+new InetSocketAddress(
+    Integer.parseInt(System.getenv().getOrDefault("PORT", "8082"))
+), 0        );
 
         // API to add students
         server.createContext("/addStudent", exchange -> {

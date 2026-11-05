@@ -9,102 +9,149 @@
 </head>
 <body>
 
-<div class="sidebar">
-    <h2>✦ Attendly</h2>
-    <p class="menu-title">MENU</p>
-    <a class="active" href="#dashboard">🏠 Dashboard</a>
-    <a href="#students">👩‍🎓 Students</a>
-    <a href="#add">➕ Add Student</a>
-    <a href="#ranking">🏆 Rankings</a>
-</div>
+<div class="app">
 
-<main>
-    <header>
-        <div>
-            <p class="muted">STUDENT MANAGEMENT</p>
+    <aside class="sidebar">
+        <h2>✦ Attendly</h2>
+        <p class="tagline">STUDENT ANALYTICS</p>
+
+        <nav>
+            <button class="nav-btn active" data-target="dashboard">🏠 Dashboard</button>
+            <button class="nav-btn" data-target="addStudentPage">➕ Add Student</button>
+            <button class="nav-btn" data-target="recordsPage">👩‍🎓 Student Records</button>
+            <button class="nav-btn" data-target="rankingsPage">🏆 Rankings</button>
+        </nav>
+
+        <div class="sidebar-bottom">
+            Learn. Track. Achieve. ✨
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <section id="dashboard" class="page active">
             <h1>Welcome, Admin! 👋</h1>
-            <p class="muted">Here's your academic overview.</p>
-        </div>
-        <span class="profile">A</span>
-    </header>
+            <p class="subtitle">Here's your academic overview.</p>
 
-    <section class="welcome">
-        <div>
-            <h2>Learn. Track. Achieve. ✨</h2>
-            <p>Manage attendance and celebrate student performance.</p>
-        </div>
-        <span class="big-icon">🎓</span>
-    </section>
+            <div class="dashboard">
+                <div class="card">
+                    <h3>Total Students</h3>
+                    <p id="totalStudents">0</p>
+                </div>
+                <div class="card">
+                    <h3>Average Attendance</h3>
+                    <p id="averageAttendance">0%</p>
+                </div>
+                <div class="card">
+                    <h3>Attendance Shortage</h3>
+                    <p id="shortageCount">0</p>
+                </div>
+                <div class="card">
+                    <h3>Average Marks</h3>
+                    <p id="averageMarks">0</p>
+                </div>
+            </div>
 
-    <section class="stats" id="dashboard">
-        <div class="card purple">
-            <p>Total Students</p>
-            <h2 id="totalStudents">0</h2>
-            <span>Registered students</span>
-        </div>
-        <div class="card green">
-            <p>Average Attendance</p>
-            <h2 id="averageAttendance">0%</h2>
-            <span>Across all students</span>
-        </div>
-        <div class="card pink">
-            <p>Attendance Shortage</p>
-            <h2 id="shortageCount">0</h2>
-            <span>Below 75%</span>
-        </div>
-        <div class="card yellow">
-            <p>Class Average</p>
-            <h2 id="averageMarks">0</h2>
-            <span>Average marks</span>
-        </div>
-    </section>
+            <div class="welcome-card">
+                <h2>Learn. Track. Achieve. ✨</h2>
+                <p>Manage student attendance, analyse academic performance and discover class rankings in one place.</p>
+            </div>
+        </section>
 
-    <section class="panel" id="add">
-        <h2>➕ Add New Student</h2>
-        <form id="studentForm">
-            <input id="roll" type="number" placeholder="Roll Number" required>
-            <input id="name" type="text" placeholder="Student Name" required>
-            <input id="total" type="number" placeholder="Total Classes" min="1" required>
-            <input id="attended" type="number" placeholder="Attended Classes" min="0" required>
-            <input id="marks" type="number" placeholder="Marks (0–100)" min="0" max="100" step="0.01" required>
-            <button type="submit">Add Student ✨</button>
-        </form>
-        <p id="message"></p>
-    </section>
+        <section id="addStudentPage" class="page">
+            <h1>Add New Student</h1>
+            <p class="subtitle">Enter student details for all five subjects.</p>
 
-    <section class="panel" id="students">
-        <div class="panel-heading">
-            <h2>👩‍🎓 Student Records</h2>
-            <input id="search" type="text" placeholder="Search students...">
-        </div>
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Roll No.</th>
-                        <th>Name</th>
-                        <th>Attendance</th>
-                        <th>Marks</th>
-                        <th>Grade</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="studentTable">
-                    <tr><td colspan="6">No students added yet.</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+            <form id="studentForm" class="student-form">
 
-    <section class="panel" id="ranking">
-        <h2>🏆 Performance Rankings</h2>
-        <ol id="rankingList">
-            <li>No rankings yet.</li>
-        </ol>
-    </section>
+                <div class="basic-details">
+                    <label for="roll">Roll Number</label>
+                    <input id="roll" type="number" min="1" required>
 
-    <footer>Made with 💜 | Attendly Student Analyzer</footer>
-</main>
+                    <label for="name">Student Name</label>
+                    <input id="name" type="text" required>
+                </div>
+
+                <div class="subject-grid">
+
+                    <div class="subject-card">
+                        <h3>Mathematics</h3>
+                        <input id="total0" type="number" min="1" placeholder="Total classes" required>
+                        <input id="attended0" type="number" min="0" placeholder="Attended classes" required>
+                        <input id="marks0" type="number" min="0" max="100" placeholder="Marks" required>
+                    </div>
+
+                    <div class="subject-card">
+                        <h3>Java</h3>
+                        <input id="total1" type="number" min="1" placeholder="Total classes" required>
+                        <input id="attended1" type="number" min="0" placeholder="Attended classes" required>
+                        <input id="marks1" type="number" min="0" max="100" placeholder="Marks" required>
+                    </div>
+
+                    <div class="subject-card">
+                        <h3>Data Structures</h3>
+                        <input id="total2" type="number" min="1" placeholder="Total classes" required>
+                        <input id="attended2" type="number" min="0" placeholder="Attended classes" required>
+                        <input id="marks2" type="number" min="0" max="100" placeholder="Marks" required>
+                    </div>
+
+                    <div class="subject-card">
+                        <h3>Computer Networks</h3>
+                        <input id="total3" type="number" min="1" placeholder="Total classes" required>
+                        <input id="attended3" type="number" min="0" placeholder="Attended classes" required>
+                        <input id="marks3" type="number" min="0" max="100" placeholder="Marks" required>
+                    </div>
+
+                    <div class="subject-card">
+                        <h3>DBMS</h3>
+                        <input id="total4" type="number" min="1" placeholder="Total classes" required>
+                        <input id="attended4" type="number" min="0" placeholder="Attended classes" required>
+                        <input id="marks4" type="number" min="0" max="100" placeholder="Marks" required>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="submit-btn">Add Student ✨</button>
+                <p id="message"></p>
+            </form>
+        </section>
+
+        <section id="recordsPage" class="page">
+            <h1>Student Records</h1>
+            <p class="subtitle">Search and review student performance.</p>
+
+            <input id="search" type="text" placeholder="Search by name or roll number...">
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Roll No.</th>
+                            <th>Name</th>
+                            <th>Attendance</th>
+                            <th>Average Marks</th>
+                            <th>Grade</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTable">
+                        <tr><td colspan="6">No students found.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="rankingsPage" class="page">
+            <h1>Performance Rankings 🏆</h1>
+            <p class="subtitle">Students ranked by average marks.</p>
+
+            <ol id="rankingList" class="ranking-list">
+                <li>No rankings yet.</li>
+            </ol>
+        </section>
+
+    </main>
+</div>
 
 <script src="script.js"></script>
 </body>

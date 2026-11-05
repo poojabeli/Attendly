@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendly | Student Analyzer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>✦ Attendly</h2>
+    <p class="menu-title">MENU</p>
+    <a class="active" href="#dashboard">🏠 Dashboard</a>
+    <a href="#students">👩‍🎓 Students</a>
+    <a href="#add">➕ Add Student</a>
+    <a href="#ranking">🏆 Rankings</a>
+</div>
+
+<main>
+    <header>
+        <div>
+            <p class="muted">STUDENT MANAGEMENT</p>
+            <h1>Welcome, Admin! 👋</h1>
+            <p class="muted">Here's your academic overview.</p>
+        </div>
+        <span class="profile">A</span>
+    </header>
+
+    <section class="welcome">
+        <div>
+            <h2>Learn. Track. Achieve. ✨</h2>
+            <p>Manage attendance and celebrate student performance.</p>
+        </div>
+        <span class="big-icon">🎓</span>
+    </section>
+
+    <section class="stats" id="dashboard">
+        <div class="card purple">
+            <p>Total Students</p>
+            <h2 id="totalStudents">0</h2>
+            <span>Registered students</span>
+        </div>
+        <div class="card green">
+            <p>Average Attendance</p>
+            <h2 id="averageAttendance">0%</h2>
+            <span>Across all students</span>
+        </div>
+        <div class="card pink">
+            <p>Attendance Shortage</p>
+            <h2 id="shortageCount">0</h2>
+            <span>Below 75%</span>
+        </div>
+        <div class="card yellow">
+            <p>Class Average</p>
+            <h2 id="averageMarks">0</h2>
+            <span>Average marks</span>
+        </div>
+    </section>
+
+    <section class="panel" id="add">
+        <h2>➕ Add New Student</h2>
+        <form id="studentForm">
+            <input id="roll" type="number" placeholder="Roll Number" required>
+            <input id="name" type="text" placeholder="Student Name" required>
+            <input id="total" type="number" placeholder="Total Classes" min="1" required>
+            <input id="attended" type="number" placeholder="Attended Classes" min="0" required>
+            <input id="marks" type="number" placeholder="Marks (0–100)" min="0" max="100" step="0.01" required>
+            <button type="submit">Add Student ✨</button>
+        </form>
+        <p id="message"></p>
+    </section>
+
+    <section class="panel" id="students">
+        <div class="panel-heading">
+            <h2>👩‍🎓 Student Records</h2>
+            <input id="search" type="text" placeholder="Search students...">
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Roll No.</th>
+                        <th>Name</th>
+                        <th>Attendance</th>
+                        <th>Marks</th>
+                        <th>Grade</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTable">
+                    <tr><td colspan="6">No students added yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel" id="ranking">
+        <h2>🏆 Performance Rankings</h2>
+        <ol id="rankingList">
+            <li>No rankings yet.</li>
+        </ol>
+    </section>
+
+    <footer>Made with 💜 | Attendly Student Analyzer</footer>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
